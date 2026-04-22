@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @OpenAPIDefinition(
-        info = @Info(title = "Project-Management-System-API", version = "1.0"),
+        info = @Info(title = "Project-Management-System-APIs", version = "1.0"),
         security = @SecurityRequirement(name = "bearerAuth")
 )
 @SecurityScheme(
