@@ -1,24 +1,24 @@
-# Project-Management-System-Spring-Boot-JPA
+# Project-Management-System-Spring-Boot
 
 [![Java](https://img.shields.io/badge/Java-17-orange?style=for-the-badge&logo=java&logoColor=white)](https://www.oracle.com/java/)
 [![Spring Boot](https://img.shields.io/badge/Spring_Boot-3.x-brightgreen?style=for-the-badge&logo=spring&logoColor=white)](https://spring.io/projects/spring-boot)
+[![MySQL](https://img.shields.io/badge/MySQL-8.0-blue?style=for-the-badge&logo=mysql&logoColor=white)](https://www.mysql.com/)
 [![Hibernate](https://img.shields.io/badge/Hibernate-ORM-59666C?style=for-the-badge&logo=hibernate&logoColor=white)](https://hibernate.org/)
-![JWT](https://img.shields.io/badge/Auth-JWT-black?style=for-the-badge)
+[![JWT](https://img.shields.io/badge/Auth-JWT-black?style=for-the-badge)](https://jwt.io/)
+[![Swagger](https://img.shields.io/badge/Docs-OpenAPI_3-85EA2D?style=for-the-badge&logo=openapi-initiative&logoColor=black)](http://localhost:8080/swagger-ui/index.html)
 
-A production-grade backend system built to demonstrate **advanced JPA relationship modeling**, **JWT-based security architecture**, and **clean layered system design** using Spring Boot.
+A production-grade backend system built to demonstrate **advanced JPA relationship modeling**, **JWT-based security architecture**, **Granular Role-Based Access Control (RBAC)**, and **clean layered system design** using Spring Boot.
 
 This project simulates a real-world **Project Management SaaS backend**, implementing:
 
 - 👥 Multi-user project collaboration
-
 - 📝 Issue tracking & threaded commenting
-
-- 🛡 Team-based access control (RBAC-style modeling)
-
+- 🛡️ Advanced Team-based access control (Jira-style RBAC modeling)
+- 📨 Real-time project invitations via secure SMTP
+- 📚 Automated Swagger UI API Documentation
+- 🌱 Automated Database Seeding for system initialization
 - 💬 Project-level real-time chat
-
 - 💳 Subscription-ready billing architecture [Working]
-
 - ⚛️ Upcoming React frontend
 
 ---
@@ -27,197 +27,205 @@ This project simulates a real-world **Project Management SaaS backend**, impleme
 - [Architecture & Design](#-architecture--design)
 - [Entity Relationship Model](#-entity-relationship-model)
 - [Relationship Strategy](#-relationship-strategy)
-- [Security Architecture](#-security-architecture)
+- [Security & RBAC Architecture](#-security--rbac-architecture)
 - [Key Features](#-key-features)
+- [API Documentation](#-api-documentation)
 - [Tech Stack](#-tech-stack)
 - [Project Structure](#-project-structure)
 - [Getting Started](#-getting-started)
+- [Engineering Highlights](#-engineering-highlights)
+- [Contact](#-contact)
 
 ---
 
 # 🏛 Architecture & Design
 
-The system follows a strict layered architecture:
+The system follows a strict layered clean architecture:
 
-```
-
-Client → Controller → Service → Repository → Database
-
+```text
+Client → JWT Filter → Controller → Service → Repository → Database
 ````
 
 ### Design Principles Applied
 
-- Separation of Concerns
-- DTO Pattern for API isolation
-- Strict Cascade Control
-- Orphan Removal for lifecycle integrity
-- Lazy Loading for performance optimization
-- Enum-based domain constraints
-- Token-based stateless authentication
+  - **Separation of Concerns:** Strict isolation between web, business, and data layers.
+  - **DTO Pattern:** Ensures API payload isolation and prevents infinite recursion during bi-directional JSON mapping.
+  - **Strict Cascade Control & Orphan Removal:** Maintains database integrity by automatically cleaning up child entities (like comments and issues) when a parent project is deleted.
+  - **Intelligent Initialization:** Bootstraps critical application data (Roles and Permissions) automatically on startup.
+  - **Token-Based Stateless Authentication:** No server-side sessions; fully scalable.
 
----
+-----
+1. For the "Entity Relationship Model" Section
+   
+Below is the production database schema showing the relationships between Users, Projects, Issues, and the RBAC system.
 
-# 🧩 Entity Relationship Model
+![Database ER Diagram](assets/er-diagram.png)
 
-```mermaid
-erDiagram
+2. For the "API Documentation" Section
 
-    USER }|--|{ PROJECT : "Member Of (N:M)"
-    PROJECT ||--o{ ISSUE : "Contains (1:N)"
-    ISSUE ||--o{ COMMENT : "Has (1:N)"
-    PROJECT ||--|| CHAT : "Has (1:1)"
-    CHAT ||--o{ MESSAGE : "Contains (1:N)"
-    USER ||--o{ ISSUE : "Assigned To (1:N)"
-    USER ||--o{ MESSAGE : "Sends (1:N)"
-    USER ||--o{ INVITATION : "Receives (1:N)"
-    USER ||--o{ SUBSCRIPTION : "Owns (1:N)"
-````
+The backend is fully documented using **OpenAPI 3.1** and **Swagger UI**. This interactive interface allows for real-time endpoint testing and schema validation.
 
----
+![Swagger API Dashboard](assets/Swagger-Hero-Shot.png)
 
-# 🔗 Relationship Strategy
+Once the application is running, navigate to:  
+👉 `http://localhost:8080/swagger-ui/index.html`
 
-| Relationship            | Mapping Strategy                    | Lifecycle Logic                                                   |
-| ----------------------- | ----------------------------------- | ----------------------------------------------------------------- |
-| **Project ↔ Chat**      | `@OneToOne`                         | Strict composition. Each project owns exactly one chat instance.  |
-| **Project ↔ Issue**     | `@OneToMany`                        | Cascade removal ensures issues are deleted if project is deleted. |
-| **Issue ↔ Comment**     | `@OneToMany` + `orphanRemoval=true` | Prevents orphaned comments in DB.                                 |
-| **User ↔ Project**      | `@ManyToMany` with JoinTable        | Models team collaboration across multiple projects.               |
-| **Chat ↔ Message**      | `@OneToMany`                        | Message lifecycle bound to Chat.                                  |
-| **User ↔ Subscription** | `@OneToMany`                        | Supports SaaS subscription scalability.                           |
+3. For the "Key Features" Section
+### 🛡️ Authentication & User Profile
+| Login & Security | User Profile |
+| :---: | :---: |
+| ![Sign In](assets/sign%20in.png) | ![User Profile](assets/User%20Profile.png) |
 
----
+### 📁 Project Management
+| Creating a Project | Search Functionality |
+| :---: | :---: |
+| ![Creating Project](assets/creating%20new%20project.png) | ![Search Project](assets/Search%20projects%20with%20keyword.png) |
 
-# 🔐 Security Architecture
+### 📝 Issue Tracking & Assignments
+| Adding an Assignee | Issue Overview |
+| :---: | :---: |
+| ![Assignee](assets/adding%20assignee%20on%20issue.png) | ![Get Issues](assets/Get%20Issues%20By%20Project%20id.png) |
 
-Authentication is implemented using:
+### 💬 Real-Time Collaboration
+The integrated chat system allows for seamless communication within project teams.
+![Project Chat](assets/Send%20Messages.png)
+# 🔐 Security & RBAC Architecture
 
-* Spring Security
-* JWT Token Provider
-* Custom UserDetailsService
-* Token validation filter
-* Stateless session management
+Authentication is fully stateless and implemented using **Spring Security** and **JWT**.
 
-### Authentication Flow
+### 🛡️ Hierarchical Role-Based Access Control
 
-1. User logs in
-2. Server validates credentials
-3. JWT token is generated
-4. Client sends token in:
+Unlike simple roles, this system validates specific **Permissions** at the method level using `@PreAuthorize`.
 
+| Role | Permissions Assigned | Use Case |
+| :--- | :--- | :--- |
+| **PROJECT\_OWNER** | *All 10 Permissions* | Project creator. Full administrative and destructive power. |
+| **ADMIN** | *9 Permissions* (No `DELETE_PROJECT`) | Trusted manager for team and task coordination. |
+| **DEVELOPER** | `READ`, `CREATE_ISSUE`, `UPDATE_ISSUE`, `COMMENT` | Core team member focused on task execution. |
+| **VIEWER** | `READ_PROJECT` only | Read-only access for stakeholders or clients. |
+
+**Code Implementation Example:**
+
+```java
+@PreAuthorize("@projectSecurity.hasPermission(authentication, #projectId, 'INVITE_USERS')")
+public ResponseEntity<MessageResponse> inviteProjectMember(...)
 ```
-Authorization: Bearer <token>
-```
 
-5. Filter validates token before controller execution
-
-No session storage. Fully stateless.
-
----
+-----
 
 # 🌟 Key Features
 
 ### 🔹 Advanced ORM Mapping
 
-* `@OneToOne`
-* `@OneToMany`
-* `@ManyToMany`
-* `@JoinTable`
-* Controlled cascading strategies
+  - Mastered use of `@OneToOne`, `@OneToMany`, and `@ManyToMany`.
+  - Controlled cascading strategies and proxy lazy loading optimization.
 
-### 🔹 SaaS-Ready Subscription Modeling
+### 🔹 Automated System Seeding
 
-* PlanType enum (FREE / MONTHLY / ANNUAL)
-* Extensible billing architecture
-* Payment integration-ready structure
+  - `DatabaseSeeder` automatically populates essential database tables (Roles & Permissions) on startup to ensure a production-ready state.
+
+### 🔹 Secure Email Integration
+
+  - Real-time project invitations sent via **Jakarta Mail (SMTP)** using secure STARTTLS encryption.
 
 ### 🔹 Issue Tracking Engine
 
-* Status handling
-* Priority modeling
-* Due date management
-* DTO abstraction
+  - Status handling, priority modeling, due date management, and DTO abstraction.
 
-### 🔹 Team Collaboration
+### 🔹 SaaS-Ready Subscription Modeling
 
-* Multi-user project access
-* Invitation-based onboarding
-* Project-level communication model
+  - `PlanType` enum (FREE / MONTHLY / ANNUAL) with an extensible billing architecture.
 
-### 🔹 Clean API Design
+-----
 
-* RESTful conventions
-* DTO-based request/response
-* Service-layer validation
-* Repository abstraction via Spring Data
+# 📋 API Documentation
 
----
+The backend exposes a fully interactive **Swagger UI** for real-time endpoint testing and schema validation.
+
+Once the application is running, navigate to:
+👉 **[http://localhost:8080/swagger-ui/index.html](https://www.google.com/search?q=http://localhost:8080/swagger-ui/index.html)**
+
+### Core Endpoint Modules:
+
+1.  **Auth APIs:** Registration & JWT Login.
+2.  **User APIs:** Profile management.
+3.  **Project APIs:** Collaboration, RBAC Invitations, and Team management.
+4.  **Issue APIs:** Task lifecycle (Create → Assign → Status Update).
+
+-----
 
 # 🛠 Tech Stack
 
-| Layer        | Technology                  |
-| ------------ | --------------------------- |
-| Language     | Java 17                     |
-| Framework    | Spring Boot 3.x             |
-| Security     | Spring Security + JWT       |
-| ORM          | Hibernate / Spring Data JPA |
-| Database     | MySQL                       |
-| Build Tool   | Maven                       |
-| Architecture | Layered MVC                 |
+| Layer | Technology |
+| :--- | :--- |
+| **Language** | Java 17 |
+| **Framework** | Spring Boot 3.x |
+| **Security** | Spring Security 6 + JWT (jjwt) |
+| **ORM** | Hibernate / Spring Data JPA |
+| **Database** | MySQL 8.0 |
+| **API Docs** | SpringDoc OpenAPI 3 (Swagger) |
+| **Mailing** | Jakarta Mail (SMTP) |
 
----
+-----
 
 # 📂 Project Structure
 
-```
+```text
 src/main/java/com/example/ProjectManagementSystem
-├── config          # JWT, Security, CORS configuration
-├── controller      # REST API endpoints
-├── service         # Business logic layer
-├── repository      # Spring Data interfaces
-├── model           # JPA entities
-├── request         # Request DTOs
-└── response        # Response DTOs
+├── config          # JWT, Security, CORS, and Swagger configs
+├── controller      # REST API endpoints with @PreAuthorize gates
+├── service         # Business logic and cross-entity validations
+├── repository      # Spring Data JPA interfaces
+├── model           # JPA entities & DTOs
+├── request         # Request Payload definitions
+├── response        # Standardized Response schemas
+└── seeder          # DatabaseSeeder for automated DB initialization
 ```
 
----
+-----
 
 # 🚀 Getting Started
 
 ## Prerequisites
 
-* JDK 17+
-* Maven 3.6+
-* MySQL running locally
+  - JDK 17+
+  - Maven 3.8+
+  - MySQL 8.0+ running locally
+  - Gmail App Password (for SMTP invitations)
 
----
+-----
 
 ## 1️⃣ Clone Repository
 
 ```bash
-git clone https://github.com/Sarfaraz-E/project-management-system-backend.git
+git clone [https://github.com/Sarfaraz-E/project-management-system-backend.git](https://github.com/Sarfaraz-E/project-management-system-backend.git)
 cd project-management-system-backend
 ```
 
----
+-----
 
-## 2️⃣ Configure Database
+## 2️⃣ Configure Environment
 
-Update:
-
-```
-src/main/resources/application.properties
-```
+Update `src/main/resources/application.properties`:
 
 ```properties
-spring.datasource.url=jdbc:mysql://localhost:3306/project_management_db
+# Database Configuration
+spring.datasource.url=jdbc:mysql://localhost:3306/projectmanagement
 spring.datasource.username=root
-spring.datasource.password=yourpassword
+spring.datasource.password=your_database_password
 spring.jpa.hibernate.ddl-auto=update
 spring.jpa.show-sql=true
+
+# SMTP Mail Configuration (For Invitations)
+spring.mail.host=smtp.gmail.com
+spring.mail.port=587
+spring.mail.username=your_email@gmail.com
+spring.mail.password=your_16_digit_app_password
+spring.mail.properties.mail.smtp.auth=true
+spring.mail.properties.mail.smtp.starttls.enable=true
 ```
 
----
+-----
 
 ## 3️⃣ Run Application
 
@@ -227,37 +235,31 @@ Using Maven wrapper:
 ./mvnw spring-boot:run
 ```
 
-Application runs at:
+The application will start, seed the database, and be available at:
+`http://localhost:8080`
+4. For the "Getting Started" Section
+The application will automatically seed the database on startup. Look for the following in your console to verify system initialization:
 
-```
-http://localhost:8080
-```
-
----
+![Startup Logs](assets/console-startup-logs.png)
+-----
 
 # 🧠 Engineering Highlights
 
-This project demonstrates:
+This project goes beyond basic CRUD operations to demonstrate:
 
-* Real-world JPA ownership modeling
-* Controlled entity lifecycle management
-* Stateless authentication architecture
-* SaaS-ready backend structure
-* Scalable domain design
-* Clean code separation across layers
+  - Real-world **JPA ownership modeling** and database relational integrity.
+  - **Method-level security authorization** to protect critical data flows.
+  - **Stateless architecture** ensuring high scalability.
+  - **Defensive programming** against infinite JSON loops and data exposure.
+  - Clean code separation across well-defined layers.
 
-This is not just CRUD — it reflects production-level backend thinking.
 
----
+ Designed & Developed by Sarfaraz Essa
 
-<div align="center">
-<sub>Designed & Developed by <strong>Sarfaraz Essa</strong></sub>
-</div>
 
----
 
 ## 📬 Contact
 
 **Sarfaraz Essa**
 📧 [sarfarazessa18@gmail.com](mailto:sarfarazessa18@gmail.com)
-[LinkedIn](https://www.linkedin.com/in/sarfaraz-essa/)
+🔗 [LinkedIn](https://www.linkedin.com/in/sarfaraz-essa/)
