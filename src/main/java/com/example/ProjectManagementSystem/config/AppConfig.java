@@ -42,12 +42,9 @@ public class AppConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration cfg = new CorsConfiguration();
 
-        // Add your production frontend URL here when you deploy it
-        cfg.setAllowedOrigins(Arrays.asList(
-                "http://localhost:3000",
-                "http://localhost:5173",
-                "http://localhost:4200"
-        ));
+        // Allow all origins. To restrict in production, replace the wildcard
+        // with specific domains, e.g. "https://your-frontend.up.railway.app".
+        cfg.setAllowedOriginPatterns(Collections.singletonList("*"));
 
         cfg.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
         cfg.setAllowCredentials(true);
