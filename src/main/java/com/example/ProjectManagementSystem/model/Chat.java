@@ -18,8 +18,9 @@ import java.util.List;
 public class Chat {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
 
     private String name;
 
@@ -40,5 +41,11 @@ public class Chat {
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     @ManyToMany
+    @JoinTable(
+            name = "chat_users",
+            joinColumns = @JoinColumn(name = "chat_id"),
+            inverseJoinColumns = @JoinColumn(name = "users_id"),
+            uniqueConstraints = @UniqueConstraint(columnNames = {"chat_id", "users_id"})
+    )
     private List<User> users = new ArrayList<>();
 }

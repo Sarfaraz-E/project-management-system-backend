@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 public class Invitation {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String token;
