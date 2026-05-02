@@ -17,7 +17,7 @@ import org.springframework.context.annotation.Configuration;
                 contact = @Contact(
                         name = "Sarfaraz Essa",
                         email = "sarfarazessa18@gmail.com",
-                        url = "https://github.com/sarfarazessa" 
+                        url = "https://github.com/Sarfaraz-E" 
                 )
         ),
         security = @SecurityRequirement(name = "bearerAuth")
@@ -29,9 +29,6 @@ import org.springframework.context.annotation.Configuration;
         bearerFormat = "JWT"
 )
 public class SwaggerConfig {
-
-
     public class OpenApiConfig {
     }
-
 }
