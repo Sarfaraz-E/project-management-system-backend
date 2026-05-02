@@ -7,12 +7,7 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 
 @SpringBootApplication
 @EnableMethodSecurity
-@ComponentScan(basePackages = {
-    "com.example.ProjectManagementSystem.controller",
-    "com.example.ProjectManagementSystem.service",
-    "com.example.ProjectManagementSystem.config",
-    "com.example.ProjectManagementSystem.repository"
-})
+@ComponentScan(basePackages = "com.example.ProjectManagementSystem")
 public class ProjectManagementSystemApplication {
 
 	public static void main(String[] args) {
