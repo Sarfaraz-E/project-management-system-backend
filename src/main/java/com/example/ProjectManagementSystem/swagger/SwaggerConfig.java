@@ -2,6 +2,7 @@ package com.example.ProjectManagementSystem.swagger;
 
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
+import io.swagger.v3.oas.annotations.info.Contact; // <--- MUST HAVE THIS
 import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.security.SecurityScheme;
@@ -27,7 +28,6 @@ import org.springframework.context.annotation.Configuration;
         scheme = "bearer",
         bearerFormat = "JWT"
 )
-
 public class SwaggerConfig {
 
 
